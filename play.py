@@ -1,4 +1,5 @@
 import random
+import sys
 
 print("Let's Play Tic-Tac-Toe!")
 
@@ -60,9 +61,11 @@ while (empty_board(board) == False):
             print('Congratulations Player 1! You Won!')
         else:
             print('Congratulations Player 2! You Won!')
-        break
+        sys.exit()
     else:
         if (current_player == player_1):
             current_player = player_2
         else:
             current_player = player_1
+
+print("Cat's Game")
