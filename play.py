@@ -15,6 +15,16 @@ def available_moves(board):
 def empty_board(board):
     return len(available_moves(board)) == 0
 
+def game_over(board):
+    return (board[0] is not '+' and board[0] == board[1] and board[1] == board[2]) or \
+           (board[3] is not '+' and board[3] == board[4] and board[4] == board[5]) or \
+           (board[6] is not '+' and board[6] == board[7] and board[7] == board[8]) or \
+           (board[0] is not '+' and board[0] == board[3] and board[3] == board[6]) or \
+           (board[1] is not '+' and board[1] == board[4] and board[4] == board[7]) or \
+           (board[2] is not '+' and board[2] == board[5] and board[5] == board[8]) or \
+           (board[0] is not '+' and board[0] == board[4] and board[4] == board[8]) or \
+           (board[2] is not '+' and board[2] == board[4] and board[4] == board[6])
+
 def computer_move(board):
     moves = available_moves(board)
     return random.choice(moves)
@@ -33,29 +43,26 @@ def human_move(board):
 
 print_board(board)
 
-board[1] = 'X'
-print_board(board)
-
-board[3] = 'O'
-print_board(board)
-
-moves = available_moves(board)
-random_move = random.choice(moves)
-board[random_move] = 'X'
-print_board(board)
-
 player_1 = 'X'
 player_2 = 'O' # Computer
 current_player = player_1
 
 while (empty_board(board) == False):
-    if (current_player == player_1):
-        current_player = player_2
-    else:
-        current_player = player_1
     if (current_player == player_2):
         move = computer_move(board)
     else:
         move = human_move(board)
     board[move] = current_player
     print_board(board)
+
+    if game_over(board):
+        if (current_player == player_1):
+            print('Congratulations Player 1! You Won!')
+        else:
+            print('Congratulations Player 2! You Won!')
+        break
+    else:
+        if (current_player == player_1):
+            current_player = player_2
+        else:
+            current_player = player_1
