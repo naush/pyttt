@@ -38,37 +38,23 @@ def opponent(player):
         return 'O'
 
 def score(board, move, player):
-    board = play_move(board, move, player)
-
     if win(board, player):
-        return 1 # win score
+        return  1 # win score
     elif win(board, opponent(player)):
         return -1 # lose score
-    elif draw(board):
-        return 0 # draw
     else:
-        return 2 # continue
-
-def recursive_score(board, move, player):
-    current_score = score(board, move, player)
-    board = play_move(board, move, player)
-
-    if (current_score == 2):
-        return -min(recursive_score(board, next_move, opponent(player)) for next_move in available_moves(board))
-    else:
-        return -current_score
+        return  0 # draw
 
 def minimax(board, move, player):
-    current_score = score(board, move, player)
+    board = play_move(board, move, player)
 
-    if (current_score < 2):
-        return current_score
+    if game_over(board):
+        return score(board, move, player)
     else:
-        board = play_move(board, move, player)
-        return min(recursive_score(board, next_move, opponent(player)) for next_move in available_moves(board))
+        return -max(minimax(board, move, opponent(player)) for move in available_moves(board))
 
 def computer_move(board, player):
-    scoreboard = [-2] * 9 # -2 is min score
+    scoreboard = [-2] * 9
     for move in available_moves(board):
         scoreboard[move] = minimax(board, move, player)
     # print(scoreboard)
