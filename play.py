@@ -1,11 +1,8 @@
 import random
 import sys
 
-print("Let's Play Tic-Tac-Toe!")
-
-board = list("+++++++++")
-
 def print_board(board):
+    print('.' * 3)
     print(''.join(board[0:3]))
     print(''.join(board[3:6]))
     print(''.join(board[6:9]))
@@ -27,6 +24,7 @@ def win(board, player):
         [0, 4, 8],
         [2, 4, 6]
     ]
+
     return any((board[one] == player and
                 board[one] == board[two] and
                 board[two] == board[three]) for one, two, three in combinations)
@@ -82,11 +80,14 @@ def play_move(board, move, player):
     board[move] = player
     return board
 
+print("Let's Play Tic-Tac-Toe!")
+
+board = list("+++++++++")
 player_1 = 'X'
 player_2 = 'O' # Computer
 player = player_1
-
 print_board(board)
+
 while not game_over(board):
     if (player == player_2):
         move = computer_move(board, player)
