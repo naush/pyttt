@@ -11,24 +11,81 @@ def print_board(board):
     print(''.join(board[6:9]))
 
 def available_moves(board):
-    return [index for index, mark in enumerate(board) if mark == '+']
+    return [move for move, mark in enumerate(board) if mark == '+']
 
-def empty_board(board):
+def draw(board):
     return len(available_moves(board)) == 0
 
-def game_over(board):
-    return (board[0] is not '+' and board[0] == board[1] and board[1] == board[2]) or \
-           (board[3] is not '+' and board[3] == board[4] and board[4] == board[5]) or \
-           (board[6] is not '+' and board[6] == board[7] and board[7] == board[8]) or \
-           (board[0] is not '+' and board[0] == board[3] and board[3] == board[6]) or \
-           (board[1] is not '+' and board[1] == board[4] and board[4] == board[7]) or \
-           (board[2] is not '+' and board[2] == board[5] and board[5] == board[8]) or \
-           (board[0] is not '+' and board[0] == board[4] and board[4] == board[8]) or \
-           (board[2] is not '+' and board[2] == board[4] and board[4] == board[6])
+def win(board, current_player):
+    return (board[0] == current_player and board[0] == board[1] and board[1] == board[2]) or \
+           (board[3] == current_player and board[3] == board[4] and board[4] == board[5]) or \
+           (board[6] == current_player and board[6] == board[7] and board[7] == board[8]) or \
+           (board[0] == current_player and board[0] == board[3] and board[3] == board[6]) or \
+           (board[1] == current_player and board[1] == board[4] and board[4] == board[7]) or \
+           (board[2] == current_player and board[2] == board[5] and board[5] == board[8]) or \
+           (board[0] == current_player and board[0] == board[4] and board[4] == board[8]) or \
+           (board[2] == current_player and board[2] == board[4] and board[4] == board[6])
 
-def computer_move(board):
-    moves = available_moves(board)
-    return random.choice(moves)
+def game_over(board):
+    return win(board, 'O') or \
+           win(board, 'X') or \
+           draw(board)
+
+def score(board, move, current_player):
+    board = list(board)
+    board[move] = current_player
+
+    if (current_player == 'O'):
+        opponent_player = 'X'
+    else:
+        opponent_player = 'O'
+
+    if (win(board, current_player)):
+        return 1 # win score
+    elif (win(board, opponent_player)):
+        return -1 # lose score
+    elif (draw(board)):
+        return 0 # draw
+    else:
+        return 2 # continue
+
+def recursive_score(board, move, current_player):
+    current_score = score(board, move, current_player)
+
+    board = list(board)
+    board[move] = current_player
+
+    if (current_score == 2):
+        if (current_player == 'O'):
+            opponent_player = 'X'
+        else:
+            opponent_player = 'O'
+        return -min(recursive_score(board, next_move, opponent_player) for next_move in available_moves(board))
+    else:
+        return -current_score
+
+def minimax(board, move, current_player):
+    current_score = score(board, move, current_player)
+
+    if (current_score < 2):
+        return current_score
+    else:
+        board = list(board)
+        board[move] = current_player
+
+        if (current_player == 'O'):
+            opponent_player = 'X'
+        else:
+            opponent_player = 'O'
+
+        return min(recursive_score(board, next_move, opponent_player) for next_move in available_moves(board))
+
+def computer_move(board, current_player):
+    scoreboard = [-2] * 9 # -2 is min score
+    for move in available_moves(board):
+        scoreboard[move] = minimax(board, move, current_player)
+    print(scoreboard)
+    return scoreboard.index(max(scoreboard))
 
 def human_move(board):
     while True:
@@ -48,11 +105,12 @@ player_1 = 'X'
 player_2 = 'O' # Computer
 current_player = player_1
 
-while (empty_board(board) == False):
+while True:
     if (current_player == player_2):
-        move = computer_move(board)
+        move = computer_move(board, current_player)
     else:
         move = human_move(board)
+
     board[move] = current_player
     print_board(board)
 
