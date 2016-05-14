@@ -40,11 +40,11 @@ def opponent(player):
 def score(board, move, player):
     board = play_move(board, move, player)
 
-    if (win(board, player)):
+    if win(board, player):
         return 1 # win score
-    elif (win(board, opponent(player))):
+    elif win(board, opponent(player)):
         return -1 # lose score
-    elif (draw(board)):
+    elif draw(board):
         return 0 # draw
     else:
         return 2 # continue
@@ -71,7 +71,7 @@ def computer_move(board, player):
     scoreboard = [-2] * 9 # -2 is min score
     for move in available_moves(board):
         scoreboard[move] = minimax(board, move, player)
-    print(scoreboard)
+    # print(scoreboard)
     return scoreboard.index(max(scoreboard))
 
 def human_move(board):
@@ -102,12 +102,12 @@ while not game_over(board):
     else:
         move = human_move(board)
     board = play_move(board, move, player)
-    print_board(board)
     player = opponent(player)
+    print_board(board)
 
-if (draw(board)):
+if draw(board):
     print("Cat's Game")
-elif (current_player == player_1):
+elif win(board, player_1):
     print('Congratulations Player 1! You Won!')
 else:
     print('Congratulations Player 2! You Won!')
