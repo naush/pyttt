@@ -16,15 +16,15 @@ def available_moves(board):
 def draw(board):
     return len(available_moves(board)) == 0
 
-def win(board, current_player):
-    return (board[0] == current_player and board[0] == board[1] and board[1] == board[2]) or \
-           (board[3] == current_player and board[3] == board[4] and board[4] == board[5]) or \
-           (board[6] == current_player and board[6] == board[7] and board[7] == board[8]) or \
-           (board[0] == current_player and board[0] == board[3] and board[3] == board[6]) or \
-           (board[1] == current_player and board[1] == board[4] and board[4] == board[7]) or \
-           (board[2] == current_player and board[2] == board[5] and board[5] == board[8]) or \
-           (board[0] == current_player and board[0] == board[4] and board[4] == board[8]) or \
-           (board[2] == current_player and board[2] == board[4] and board[4] == board[6])
+def win(board, player):
+    return (board[0] == player and board[0] == board[1] and board[1] == board[2]) or \
+           (board[3] == player and board[3] == board[4] and board[4] == board[5]) or \
+           (board[6] == player and board[6] == board[7] and board[7] == board[8]) or \
+           (board[0] == player and board[0] == board[3] and board[3] == board[6]) or \
+           (board[1] == player and board[1] == board[4] and board[4] == board[7]) or \
+           (board[2] == player and board[2] == board[5] and board[5] == board[8]) or \
+           (board[0] == player and board[0] == board[4] and board[4] == board[8]) or \
+           (board[2] == player and board[2] == board[4] and board[4] == board[6])
 
 def game_over(board):
     return win(board, 'O') or \
@@ -37,40 +37,40 @@ def opponent(player):
     else:
         return 'O'
 
-def score(board, move, current_player):
-    board = play_move(board, move, current_player)
+def score(board, move, player):
+    board = play_move(board, move, player)
 
-    if (win(board, current_player)):
+    if (win(board, player)):
         return 1 # win score
-    elif (win(board, opponent(current_player))):
+    elif (win(board, opponent(player))):
         return -1 # lose score
     elif (draw(board)):
         return 0 # draw
     else:
         return 2 # continue
 
-def recursive_score(board, move, current_player):
-    current_score = score(board, move, current_player)
-    board = play_move(board, move, current_player)
+def recursive_score(board, move, player):
+    current_score = score(board, move, player)
+    board = play_move(board, move, player)
 
     if (current_score == 2):
-        return -min(recursive_score(board, next_move, opponent(current_player)) for next_move in available_moves(board))
+        return -min(recursive_score(board, next_move, opponent(player)) for next_move in available_moves(board))
     else:
         return -current_score
 
-def minimax(board, move, current_player):
-    current_score = score(board, move, current_player)
+def minimax(board, move, player):
+    current_score = score(board, move, player)
 
     if (current_score < 2):
         return current_score
     else:
-        board = play_move(board, move, current_player)
-        return min(recursive_score(board, next_move, opponent(current_player)) for next_move in available_moves(board))
+        board = play_move(board, move, player)
+        return min(recursive_score(board, next_move, opponent(player)) for next_move in available_moves(board))
 
-def computer_move(board, current_player):
+def computer_move(board, player):
     scoreboard = [-2] * 9 # -2 is min score
     for move in available_moves(board):
-        scoreboard[move] = minimax(board, move, current_player)
+        scoreboard[move] = minimax(board, move, player)
     print(scoreboard)
     return scoreboard.index(max(scoreboard))
 
@@ -93,17 +93,17 @@ def play_move(board, move, player):
 
 player_1 = 'X'
 player_2 = 'O' # Computer
-current_player = player_1
+player = player_1
 
 print_board(board)
 while not game_over(board):
-    if (current_player == player_2):
-        move = computer_move(board, current_player)
+    if (player == player_2):
+        move = computer_move(board, player)
     else:
         move = human_move(board)
-    board = play_move(board, move, current_player)
+    board = play_move(board, move, player)
     print_board(board)
-    current_player = opponent(current_player)
+    player = opponent(player)
 
 if (draw(board)):
     print("Cat's Game")
