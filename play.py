@@ -38,8 +38,7 @@ def opponent(player):
         return 'O'
 
 def score(board, move, current_player):
-    board = list(board)
-    board[move] = current_player
+    board = play_move(board, move, current_player)
 
     if (win(board, current_player)):
         return 1 # win score
@@ -52,9 +51,7 @@ def score(board, move, current_player):
 
 def recursive_score(board, move, current_player):
     current_score = score(board, move, current_player)
-
-    board = list(board)
-    board[move] = current_player
+    board = play_move(board, move, current_player)
 
     if (current_score == 2):
         return -min(recursive_score(board, next_move, opponent(current_player)) for next_move in available_moves(board))
@@ -67,9 +64,7 @@ def minimax(board, move, current_player):
     if (current_score < 2):
         return current_score
     else:
-        board = list(board)
-        board[move] = current_player
-
+        board = play_move(board, move, current_player)
         return min(recursive_score(board, next_move, opponent(current_player)) for next_move in available_moves(board))
 
 def computer_move(board, current_player):
@@ -91,6 +86,11 @@ def human_move(board):
             print('Invalid move')
     return move
 
+def play_move(board, move, player):
+    board = list(board)
+    board[move] = player
+    return board
+
 player_1 = 'X'
 player_2 = 'O' # Computer
 current_player = player_1
@@ -101,7 +101,7 @@ while not game_over(board):
         move = computer_move(board, current_player)
     else:
         move = human_move(board)
-    board[move] = current_player
+    board = play_move(board, move, current_player)
     print_board(board)
     current_player = opponent(current_player)
 
