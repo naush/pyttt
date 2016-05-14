@@ -1,6 +1,13 @@
 import random
 import sys
 
+BOARD = "+++++++++"
+PLAYER_1 = 'X'
+PLAYER_2 = 'O' # Computer
+SCORE_WIN = 1
+SCORE_LOSE = -1
+SCORE_DRAW = 0
+
 def print_board(board):
     print('.' * 3)
     print(''.join(board[0:3]))
@@ -30,23 +37,23 @@ def win(board, player):
                 board[two] == board[three]) for one, two, three in combinations)
 
 def game_over(board):
-    return win(board, 'O') or \
-           win(board, 'X') or \
+    return win(board, PLAYER_1) or \
+           win(board, PLAYER_2) or \
            draw(board)
 
 def opponent(player):
-    if (player == 'O'):
-        return 'X'
+    if (player == PLAYER_1):
+        return PLAYER_2
     else:
-        return 'O'
+        return PLAYER_1
 
 def score(board, move, player):
     if win(board, player):
-        return  1 # win score
+        return SCORE_WIN
     elif win(board, opponent(player)):
-        return -1 # lose score
+        return SCORE_LOSE
     else:
-        return  0 # draw
+        return SCORE_DRAW
 
 def minimax(board, move, player):
     board = play_move(board, move, player)
@@ -80,26 +87,24 @@ def play_move(board, move, player):
     board[move] = player
     return board
 
-print("Let's Play Tic-Tac-Toe!")
+board = list(BOARD)
+player = PLAYER_1
 
-board = list("+++++++++")
-player_1 = 'X'
-player_2 = 'O' # Computer
-player = player_1
+print("Let's Play Tic-Tac-Toe!")
 print_board(board)
 
 while not game_over(board):
-    if (player == player_2):
-        move = computer_move(board, player)
-    else:
+    if (player == PLAYER_1):
         move = human_move(board)
+    else:
+        move = computer_move(board, player)
     board = play_move(board, move, player)
     player = opponent(player)
     print_board(board)
 
 if draw(board):
     print("Cat's Game")
-elif win(board, player_1):
+elif win(board, PLAYER_1):
     print('Congratulations Player 1! You Won!')
 else:
     print('Congratulations Player 2! You Won!')
