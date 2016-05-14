@@ -31,18 +31,19 @@ def game_over(board):
            win(board, 'X') or \
            draw(board)
 
+def opponent(player):
+    if (player == 'O'):
+        return 'X'
+    else:
+        return 'O'
+
 def score(board, move, current_player):
     board = list(board)
     board[move] = current_player
 
-    if (current_player == 'O'):
-        opponent_player = 'X'
-    else:
-        opponent_player = 'O'
-
     if (win(board, current_player)):
         return 1 # win score
-    elif (win(board, opponent_player)):
+    elif (win(board, opponent(current_player))):
         return -1 # lose score
     elif (draw(board)):
         return 0 # draw
@@ -56,11 +57,7 @@ def recursive_score(board, move, current_player):
     board[move] = current_player
 
     if (current_score == 2):
-        if (current_player == 'O'):
-            opponent_player = 'X'
-        else:
-            opponent_player = 'O'
-        return -min(recursive_score(board, next_move, opponent_player) for next_move in available_moves(board))
+        return -min(recursive_score(board, next_move, opponent(current_player)) for next_move in available_moves(board))
     else:
         return -current_score
 
@@ -73,12 +70,7 @@ def minimax(board, move, current_player):
         board = list(board)
         board[move] = current_player
 
-        if (current_player == 'O'):
-            opponent_player = 'X'
-        else:
-            opponent_player = 'O'
-
-        return min(recursive_score(board, next_move, opponent_player) for next_move in available_moves(board))
+        return min(recursive_score(board, next_move, opponent(current_player)) for next_move in available_moves(board))
 
 def computer_move(board, current_player):
     scoreboard = [-2] * 9 # -2 is min score
@@ -99,31 +91,23 @@ def human_move(board):
             print('Invalid move')
     return move
 
-print_board(board)
-
 player_1 = 'X'
 player_2 = 'O' # Computer
 current_player = player_1
 
-while True:
+print_board(board)
+while not game_over(board):
     if (current_player == player_2):
         move = computer_move(board, current_player)
     else:
         move = human_move(board)
-
     board[move] = current_player
     print_board(board)
+    current_player = opponent(current_player)
 
-    if game_over(board):
-        if (current_player == player_1):
-            print('Congratulations Player 1! You Won!')
-        else:
-            print('Congratulations Player 2! You Won!')
-        sys.exit()
-    else:
-        if (current_player == player_1):
-            current_player = player_2
-        else:
-            current_player = player_1
-
-print("Cat's Game")
+if (draw(board)):
+    print("Cat's Game")
+elif (current_player == player_1):
+    print('Congratulations Player 1! You Won!')
+else:
+    print('Congratulations Player 2! You Won!')
