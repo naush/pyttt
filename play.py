@@ -17,14 +17,19 @@ def draw(board):
     return len(available_moves(board)) == 0
 
 def win(board, player):
-    return (board[0] == player and board[0] == board[1] and board[1] == board[2]) or \
-           (board[3] == player and board[3] == board[4] and board[4] == board[5]) or \
-           (board[6] == player and board[6] == board[7] and board[7] == board[8]) or \
-           (board[0] == player and board[0] == board[3] and board[3] == board[6]) or \
-           (board[1] == player and board[1] == board[4] and board[4] == board[7]) or \
-           (board[2] == player and board[2] == board[5] and board[5] == board[8]) or \
-           (board[0] == player and board[0] == board[4] and board[4] == board[8]) or \
-           (board[2] == player and board[2] == board[4] and board[4] == board[6])
+    combinations = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ]
+    return any((board[one] == player and
+                board[one] == board[two] and
+                board[two] == board[three]) for one, two, three in combinations)
 
 def game_over(board):
     return win(board, 'O') or \
@@ -51,13 +56,13 @@ def minimax(board, move, player):
     if game_over(board):
         return score(board, move, player)
     else:
-        return -max(minimax(board, move, opponent(player)) for move in available_moves(board))
+        return -max(minimax(board, move, opponent(player)) \
+                    for move in available_moves(board))
 
 def computer_move(board, player):
     scoreboard = [-2] * 9
     for move in available_moves(board):
         scoreboard[move] = minimax(board, move, player)
-    # print(scoreboard)
     return scoreboard.index(max(scoreboard))
 
 def human_move(board):
